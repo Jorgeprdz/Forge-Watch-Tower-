@@ -1,0 +1,50 @@
+name: Forge Watch Tower Audit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: '20 12 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Watch Tower
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run independent read-only audit
+        run: node src/watchtower.mjs
+
+      - name: Publish report to job summary
+        if: always()
+        run: |
+          if [ -f reports/latest.md ]; then
+            cat reports/latest.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '# Watch Tower did not produce a report' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload Watch Tower evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-watchtower-report
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
