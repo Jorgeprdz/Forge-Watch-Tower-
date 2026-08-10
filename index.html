@@ -19,7 +19,7 @@
 </main>
 <script>
 const API='https://api.github.com/repos/Jorgeprdz/ForgeOS';
-const PROSPECT_ACCEPTANCE='067g17a1-remote-security-acceptance.yml';
+const PROSPECT_ACCEPTANCE='writable-synthetic-acceptance-005c.yml';
 const sources=['AGENTS.md','FORGE_CONSTITUTION_V3.md','docs/00-governance/FORGE_ROBOCOP_DIRECTIVES.md','docs/00-governance/FORGE_GOVERNANCE_REGISTRY.md'];
 const council=['Miranda','Nash','Joy Mangano','Arqui Juve','Jürgen Klaric','Jordan Belfort','Hitch','Patch Adams','Chris Gardner','Rocky','Mick','Nicky Spurgeon','Andrey'];
 const aliases={'Joy Mangano':['Joy Mangano','Joy Mangano'],'Arqui Juve':['Arqui Juve','Arqui Juve'],'Jürgen Klaric':['Jürgen Klaric','Jurgen Klaric','Jürgen Klaric'],'Jordan Belfort':['Jordan Belfort','Jordan Belfort'],'Patch Adams':['Patch Adams','Patch Adams'],'Chris Gardner':['Chris Gardner','Chris Gardner'],'Nicky Spurgeon':['Nicky Spurgeon','Nicky Spurgeon']};
@@ -43,12 +43,12 @@ async function audit(){
  try{
    const runs=await json(`${API}/actions/workflows/${PROSPECT_ACCEPTANCE}/runs?per_page=1`);
    const r=runs.workflow_runs?.[0];
-   if(!r) f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:'no acceptance evidence'});
+   if(!r) f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:'005C not run on current main'});
    else if(sha==='UNKNOWN') f.push({id:'PROSPECT_DATA_INTEGRITY',status:'UNKNOWN',summary:'main SHA unknown'});
-   else if(r.head_sha!==sha) f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:`stale · ${String(r.head_sha||'unknown').slice(0,12)}`});
-   else if(r.status!=='completed') f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:r.status});
-   else f.push({id:'PROSPECT_DATA_INTEGRITY',status:r.conclusion==='success'?'PASS':'FAIL',summary:r.conclusion==='success'?'current main · isolated A/B':`current main · ${r.conclusion||'failed'}`});
- }catch{f.push({id:'PROSPECT_DATA_INTEGRITY',status:'UNKNOWN',summary:'acceptance unreadable'})}
+   else if(r.head_sha!==sha) f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:`stale 005C · ${String(r.head_sha||'unknown').slice(0,12)}`});
+   else if(r.status!=='completed') f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:`005C · ${r.status}`});
+   else f.push({id:'PROSPECT_DATA_INTEGRITY',status:r.conclusion==='success'?'PASS':'FAIL',summary:r.conclusion==='success'?'005C current main · isolated A/B':`005C current main · ${r.conclusion||'failed'}`});
+ }catch{f.push({id:'PROSPECT_DATA_INTEGRITY',status:'UNKNOWN',summary:'005C acceptance unreadable'})}
  document.getElementById('sha').textContent=sha;document.getElementById('time').textContent=new Date().toLocaleString('es-MX');render(f)
 }
 audit();setInterval(audit,60000);
