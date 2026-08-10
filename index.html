@@ -19,17 +19,38 @@
 </main>
 <script>
 const API='https://api.github.com/repos/Jorgeprdz/ForgeOS';
+const PROSPECT_ACCEPTANCE='067g17a1-remote-security-acceptance.yml';
 const sources=['AGENTS.md','FORGE_CONSTITUTION_V3.md','docs/00-governance/FORGE_ROBOCOP_DIRECTIVES.md','docs/00-governance/FORGE_GOVERNANCE_REGISTRY.md'];
 const council=['Miranda','Nash','Joy Mangano','Arqui Juve','Jürgen Klaric','Jordan Belfort','Hitch','Patch Adams','Chris Gardner','Rocky','Mick','Nicky Spurgeon','Andrey'];
 const aliases={'Joy Mangano':['Joy Mangano','Joy Mangano'],'Arqui Juve':['Arqui Juve','Arqui Juve'],'Jürgen Klaric':['Jürgen Klaric','Jurgen Klaric','Jürgen Klaric'],'Jordan Belfort':['Jordan Belfort','Jordan Belfort'],'Patch Adams':['Patch Adams','Patch Adams'],'Chris Gardner':['Chris Gardner','Chris Gardner'],'Nicky Spurgeon':['Nicky Spurgeon','Nicky Spurgeon']};
-const labels={REPOSITORY_BOUNDARY:'Repository boundary',MAIN_SHA:'Main SHA',CANONICAL_SOURCES:'Canonical sources',COUNCIL_AUTHORITY:'Council authority',RECENT_CI:'Recent CI'};
+const labels={REPOSITORY_BOUNDARY:'Repository boundary',MAIN_SHA:'Main SHA',CANONICAL_SOURCES:'Canonical sources',COUNCIL_AUTHORITY:'Council authority',RECENT_CI:'Recent CI',PROSPECT_DATA_INTEGRITY:'Prospect data integrity'};
 async function json(url){const r=await fetch(url,{headers:{Accept:'application/vnd.github+json'}});if(!r.ok)throw new Error(`${r.status}`);return r.json()}
 async function text(url){const r=await fetch(url);if(!r.ok)throw new Error(`${r.status}`);return r.text()}
 function setStatus(el,s){el.className=s.toLowerCase();el.textContent=s}
 function worst(items){const rank={PASS:0,UNKNOWN:1,WARN:2,FAIL:3};return ['PASS','UNKNOWN','WARN','FAIL'][Math.max(...items.map(x=>rank[x.status]))]}
 function score(items){const p={PASS:1,UNKNOWN:.5,WARN:.4,FAIL:0};return Math.round(100*items.reduce((a,x)=>a+p[x.status],0)/items.length)}
 function render(findings){const root=document.getElementById('sensors');root.innerHTML='';for(const f of findings){const row=document.createElement('div');row.className='sensor';row.innerHTML=`<i class="dot ${f.status.toLowerCase()}"></i><b>${labels[f.id]}</b><small>${f.summary}</small>`;root.append(row)}const s=worst(findings);setStatus(document.getElementById('status'),s);document.getElementById('score').textContent=`${score(findings)} / 100`}
-async function audit(){const f=[];let sha='UNKNOWN',all='';try{const repo=await json(API);f.push({id:'REPOSITORY_BOUNDARY',status:repo.default_branch==='main'?'PASS':'WARN',summary:`default: ${repo.default_branch}`})}catch{f.push({id:'REPOSITORY_BOUNDARY',status:'FAIL',summary:'unreachable'})}try{const c=await json(`${API}/commits/main`);sha=c.sha;f.push({id:'MAIN_SHA',status:'PASS',summary:sha.slice(0,12)})}catch{f.push({id:'MAIN_SHA',status:'FAIL',summary:'unresolved'})}let sourceFail=0,sourceWarn=0;for(const p of sources){try{all+='\n'+await text(`https://raw.githubusercontent.com/Jorgeprdz/ForgeOS/${sha==='UNKNOWN'?'main':sha}/${p}`)}catch(e){String(e).includes('404')?sourceFail++:sourceWarn++}}f.push({id:'CANONICAL_SOURCES',status:sourceFail?'FAIL':sourceWarn?'WARN':'PASS',summary:sourceFail?`${sourceFail} missing`:sourceWarn?`${sourceWarn} uncertain`:`${sources.length}/${sources.length}`});const missing=council.filter(n=>!(aliases[n]||[n]).some(a=>all.includes(a)));f.push({id:'COUNCIL_AUTHORITY',status:missing.length?'WARN':'PASS',summary:missing.length?`${missing.length} missing`:'13/13'});try{const runs=await json(`${API}/actions/runs?branch=main&per_page=1`);const r=runs.workflow_runs?.[0];if(!r)f.push({id:'RECENT_CI',status:'UNKNOWN',summary:'no runs'});else f.push({id:'RECENT_CI',status:r.status==='completed'&&r.conclusion==='success'?'PASS':'WARN',summary:r.status==='completed'?r.conclusion:r.status})}catch{f.push({id:'RECENT_CI',status:'UNKNOWN',summary:'unreadable'})}document.getElementById('sha').textContent=sha;document.getElementById('time').textContent=new Date().toLocaleString('es-MX');render(f)}
+async function audit(){
+ const f=[];let sha='UNKNOWN',all='';
+ try{const repo=await json(API);f.push({id:'REPOSITORY_BOUNDARY',status:repo.default_branch==='main'?'PASS':'WARN',summary:`default: ${repo.default_branch}`})}catch{f.push({id:'REPOSITORY_BOUNDARY',status:'FAIL',summary:'unreachable'})}
+ try{const c=await json(`${API}/commits/main`);sha=c.sha;f.push({id:'MAIN_SHA',status:'PASS',summary:sha.slice(0,12)})}catch{f.push({id:'MAIN_SHA',status:'FAIL',summary:'unresolved'})}
+ let sourceFail=0,sourceWarn=0;
+ for(const p of sources){try{all+='\n'+await text(`https://raw.githubusercontent.com/Jorgeprdz/ForgeOS/${sha==='UNKNOWN'?'main':sha}/${p}`)}catch(e){String(e).includes('404')?sourceFail++:sourceWarn++}}
+ f.push({id:'CANONICAL_SOURCES',status:sourceFail?'FAIL':sourceWarn?'WARN':'PASS',summary:sourceFail?`${sourceFail} missing`:sourceWarn?`${sourceWarn} uncertain`:`${sources.length}/${sources.length}`});
+ const missing=council.filter(n=>!(aliases[n]||[n]).some(a=>all.includes(a)));
+ f.push({id:'COUNCIL_AUTHORITY',status:missing.length?'WARN':'PASS',summary:missing.length?`${missing.length} missing`:'13/13'});
+ try{const runs=await json(`${API}/actions/runs?branch=main&per_page=1`);const r=runs.workflow_runs?.[0];if(!r)f.push({id:'RECENT_CI',status:'UNKNOWN',summary:'no runs'});else f.push({id:'RECENT_CI',status:r.status==='completed'&&r.conclusion==='success'?'PASS':'WARN',summary:r.status==='completed'?r.conclusion:r.status})}catch{f.push({id:'RECENT_CI',status:'UNKNOWN',summary:'unreadable'})}
+ try{
+   const runs=await json(`${API}/actions/workflows/${PROSPECT_ACCEPTANCE}/runs?per_page=1`);
+   const r=runs.workflow_runs?.[0];
+   if(!r) f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:'no acceptance evidence'});
+   else if(sha==='UNKNOWN') f.push({id:'PROSPECT_DATA_INTEGRITY',status:'UNKNOWN',summary:'main SHA unknown'});
+   else if(r.head_sha!==sha) f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:`stale · ${String(r.head_sha||'unknown').slice(0,12)}`});
+   else if(r.status!=='completed') f.push({id:'PROSPECT_DATA_INTEGRITY',status:'WARN',summary:r.status});
+   else f.push({id:'PROSPECT_DATA_INTEGRITY',status:r.conclusion==='success'?'PASS':'FAIL',summary:r.conclusion==='success'?'current main · isolated A/B':`current main · ${r.conclusion||'failed'}`});
+ }catch{f.push({id:'PROSPECT_DATA_INTEGRITY',status:'UNKNOWN',summary:'acceptance unreadable'})}
+ document.getElementById('sha').textContent=sha;document.getElementById('time').textContent=new Date().toLocaleString('es-MX');render(f)
+}
 audit();setInterval(audit,60000);
 </script>
 </body>
