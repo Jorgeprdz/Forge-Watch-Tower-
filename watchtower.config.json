@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0",
+  "target": {
+    "repository": "Jorgeprdz/ForgeOS",
+    "branch": "main"
+  },
+  "requiredSources": [
+    "AGENTS.md",
+    "FORGE_CONSTITUTION_V3.md",
+    "docs/00-governance/FORGE_ROBOCOP_DIRECTIVES.md",
+    "docs/00-governance/FORGE_GOVERNANCE_REGISTRY.md"
+  ],
+  "council": [
+    { "name": "Miranda", "aliases": ["Miranda"] },
+    { "name": "Nash", "aliases": ["Nash", "NASH"] },
+    { "name": "Joy Mangano", "aliases": ["Joy Mangano", "Joy Mangano"] },
+    { "name": "Arqui Juve", "aliases": ["Arqui Juve", "Arqui Juve"] },
+    { "name": "Jürgen Klaric", "aliases": ["Jürgen Klaric", "Jurgen Klaric", "Jürgen Klaric"] },
+    { "name": "Jordan Belfort", "aliases": ["Jordan Belfort", "Jordan Belfort"] },
+    { "name": "Hitch", "aliases": ["Hitch"] },
+    { "name": "Patch Adams", "aliases": ["Patch Adams", "Patch Adams"] },
+    { "name": "Chris Gardner", "aliases": ["Chris Gardner", "Chris Gardner"] },
+    { "name": "Rocky", "aliases": ["Rocky"] },
+    { "name": "Mick", "aliases": ["Mick"] },
+    { "name": "Nicky Spurgeon", "aliases": ["Nicky Spurgeon", "Nicky Spurgeon"] },
+    { "name": "Andrey (The Allocator)", "aliases": ["Andrey", "The Allocator"] }
+  ]
+}

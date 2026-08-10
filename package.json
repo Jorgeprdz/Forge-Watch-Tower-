@@ -1,0 +1,12 @@
+{
+  "name": "forge-watch-tower",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit": "node src/watchtower.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
