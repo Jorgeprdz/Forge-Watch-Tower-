@@ -1,6 +1,9 @@
 name: Forge Watch Tower Audit
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
