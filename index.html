@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b10">
+<title>Forge Watch Tower</title>
+<style>
+:root{color-scheme:dark;--bg:#080b10;--panel:#10151d;--line:#202936;--text:#edf2f7;--muted:#8793a3;--ok:#58d68d;--warn:#f5b942;--fail:#ff6678;--unknown:#8290a3}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -20%,#172130 0,#080b10 48%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);display:grid;place-items:center;padding:22px}.monitor{width:min(780px,100%);background:rgba(16,21,29,.92);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.42)}header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}.brand{font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.readonly{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:6px 9px;border-radius:999px}.hero{text-align:center;padding:14px 0 30px}.label{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}#status{font-size:clamp(58px,12vw,96px);font-weight:900;line-height:1;margin:10px 0 8px}.pass{color:var(--ok)}.warn{color:var(--warn)}.fail{color:var(--fail)}.unknown{color:var(--unknown)}#score{font-size:20px;font-weight:700}.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.meta>div{background:#0b1017;border:1px solid var(--line);border-radius:14px;padding:12px 14px}.meta span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.meta strong{font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.sensors{border-top:1px solid var(--line);padding-top:16px}.sensor{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid rgba(32,41,54,.65)}.dot{width:10px;height:10px;border-radius:50%;background:var(--unknown);box-shadow:0 0 14px currentColor}.sensor b{font-size:14px}.sensor small{color:var(--muted);font-size:11px}.footer{display:flex;justify-content:space-between;gap:16px;margin-top:18px;color:var(--muted);font-size:11px}.dot.pass{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.fail{background:var(--fail)}.dot.unknown{background:var(--unknown)}@media(max-width:560px){.monitor{padding:20px;border-radius:20px}.meta{grid-template-columns:1fr}.sensor{grid-template-columns:14px 1fr}.sensor small{grid-column:2}}
+</style>
+</head>
+<body>
+<main class="monitor" aria-live="polite">
+<header><div class="brand">Forge Watch Tower</div><div class="readonly">READ ONLY</div></header>
+<section class="hero"><div class="label">Forge Health</div><div id="status" class="unknown">CHECKING</div><div id="score">— / 100</div><div class="meta"><div><span>ForgeOS main</span><strong id="sha">resolviendo…</strong></div><div><span>Última lectura</span><strong id="time">—</strong></div></div></section>
+<section class="sensors" id="sensors"></section>
+<div class="footer"><span>Observe → Detect → Explain → Evidence</span><span>Auto refresh · 60 s</span></div>
+</main>
+<script>
+const API='https://api.github.com/repos/Jorgeprdz/ForgeOS';
+const sources=['AGENTS.md','FORGE_CONSTITUTION_V3.md','docs/00-governance/FORGE_ROBOCOP_DIRECTIVES.md','docs/00-governance/FORGE_GOVERNANCE_REGISTRY.md'];
+const council=['Miranda','Nash','Joy Mangano','Arqui Juve','Jürgen Klaric','Jordan Belfort','Hitch','Patch Adams','Chris Gardner','Rocky','Mick','Nicky Spurgeon','Andrey'];
+const aliases={'Joy Mangano':['Joy Mangano','Joy Mangano'],'Arqui Juve':['Arqui Juve','Arqui Juve'],'Jürgen Klaric':['Jürgen Klaric','Jurgen Klaric','Jürgen Klaric'],'Jordan Belfort':['Jordan Belfort','Jordan Belfort'],'Patch Adams':['Patch Adams','Patch Adams'],'Chris Gardner':['Chris Gardner','Chris Gardner'],'Nicky Spurgeon':['Nicky Spurgeon','Nicky Spurgeon']};
+const labels={REPOSITORY_BOUNDARY:'Repository boundary',MAIN_SHA:'Main SHA',CANONICAL_SOURCES:'Canonical sources',COUNCIL_AUTHORITY:'Council authority',RECENT_CI:'Recent CI'};
+async function json(url){const r=await fetch(url,{headers:{Accept:'application/vnd.github+json'}});if(!r.ok)throw new Error(`${r.status}`);return r.json()}
+async function text(url){const r=await fetch(url);if(!r.ok)throw new Error(`${r.status}`);return r.text()}
+function setStatus(el,s){el.className=s.toLowerCase();el.textContent=s}
+function worst(items){const rank={PASS:0,UNKNOWN:1,WARN:2,FAIL:3};return ['PASS','UNKNOWN','WARN','FAIL'][Math.max(...items.map(x=>rank[x.status]))]}
+function score(items){const p={PASS:1,UNKNOWN:.5,WARN:.4,FAIL:0};return Math.round(100*items.reduce((a,x)=>a+p[x.status],0)/items.length)}
+function render(findings){const root=document.getElementById('sensors');root.innerHTML='';for(const f of findings){const row=document.createElement('div');row.className='sensor';row.innerHTML=`<i class="dot ${f.status.toLowerCase()}"></i><b>${labels[f.id]}</b><small>${f.summary}</small>`;root.append(row)}const s=worst(findings);setStatus(document.getElementById('status'),s);document.getElementById('score').textContent=`${score(findings)} / 100`}
+async function audit(){const f=[];let sha='UNKNOWN',all='';try{const repo=await json(API);f.push({id:'REPOSITORY_BOUNDARY',status:repo.default_branch==='main'?'PASS':'WARN',summary:`default: ${repo.default_branch}`})}catch{f.push({id:'REPOSITORY_BOUNDARY',status:'FAIL',summary:'unreachable'})}try{const c=await json(`${API}/commits/main`);sha=c.sha;f.push({id:'MAIN_SHA',status:'PASS',summary:sha.slice(0,12)})}catch{f.push({id:'MAIN_SHA',status:'FAIL',summary:'unresolved'})}let sourceFail=0,sourceWarn=0;for(const p of sources){try{all+='\n'+await text(`https://raw.githubusercontent.com/Jorgeprdz/ForgeOS/${sha==='UNKNOWN'?'main':sha}/${p}`)}catch(e){String(e).includes('404')?sourceFail++:sourceWarn++}}f.push({id:'CANONICAL_SOURCES',status:sourceFail?'FAIL':sourceWarn?'WARN':'PASS',summary:sourceFail?`${sourceFail} missing`:sourceWarn?`${sourceWarn} uncertain`:`${sources.length}/${sources.length}`});const missing=council.filter(n=>!(aliases[n]||[n]).some(a=>all.includes(a)));f.push({id:'COUNCIL_AUTHORITY',status:missing.length?'WARN':'PASS',summary:missing.length?`${missing.length} missing`:'13/13'});try{const runs=await json(`${API}/actions/runs?branch=main&per_page=1`);const r=runs.workflow_runs?.[0];if(!r)f.push({id:'RECENT_CI',status:'UNKNOWN',summary:'no runs'});else f.push({id:'RECENT_CI',status:r.status==='completed'&&r.conclusion==='success'?'PASS':'WARN',summary:r.status==='completed'?r.conclusion:r.status})}catch{f.push({id:'RECENT_CI',status:'UNKNOWN',summary:'unreadable'})}document.getElementById('sha').textContent=sha;document.getElementById('time').textContent=new Date().toLocaleString('es-MX');render(f)}
+audit();setInterval(audit,60000);
+</script>
+</body>
+</html>
