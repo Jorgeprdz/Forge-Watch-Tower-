@@ -49,6 +49,7 @@ Current post-remediation status:
 - `SUMMARY.txt` — current static-analysis + remediation status.
 - `STATIC-PROVENANCE-REPORT.txt` — exact kernel/BTF identity and provenance status.
 - `POST-REMEDIATION-V3.txt` — post-remediation gate summary.
+- `STATIC-NAME-COVERAGE.txt` — hash-gated exact CCZH1 name-only structural coverage; no addresses or offsets.
 - `CCZH1-PROVENANCE-AUDIT.tsv` — original field-by-field provenance classification.
 - `TARGET-H-AUDIT.tsv` — exact target header availability audit.
 - `UNRESOLVED-STATUS.tsv` — remaining profile gaps and classifications.
@@ -69,6 +70,7 @@ Important: hashes/sizes in `ARTIFACT-MANIFEST.txt` describe the **canonical pack
 
 - Static identity/provenance: `PASS`
 - Exact CCZH1 kernel/BTF/ELF/symbol inventory: verified
+- Static name-only structural coverage: complete for the audited named components
 - Pre-remediation foreign-family contamination: `FOUND` and rejected as evidence
 - Post-remediation active foreign-reference count: `0`
 - Foreign-family fallback accepted as evidence: `NO`
