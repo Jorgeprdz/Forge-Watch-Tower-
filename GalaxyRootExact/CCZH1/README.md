@@ -22,15 +22,38 @@ Public evidence index for the exact Samsung Galaxy S25 base-model build `S931BXX
 
 No `pa3q` / `S938N` profile values are treated as evidence for this target.
 
+## Provenance-remediation note
+
+The first public static audit intentionally recorded foreign-family references that existed in the local profile-generation tooling. Those references were classified as forbidden evidence, not accepted as CCZH1 facts.
+
+A later local remediation pass (`V3`, 2026-09-14 15:40 -06:00) removed the active foreign-family fallback/proximity/cross-target paths and disabled both profile derivation and candidate-payload compilation while the exact profile remains unresolved.
+
+Current post-remediation status:
+
+- Foreign-reference count in the two remediated files: `0`
+- Legacy family fallback: disabled
+- Legacy proximity hint: disabled
+- Cross-target textual substitution: disabled
+- Exact-reference handling: fail-closed
+- Profile derivation step: disabled
+- Payload compile step: disabled
+- Missing exact values: remain `UNRESOLVED`
+- Exact verified `target.h`: still `NO`
+- Root profile complete: `NO`
+- Exploit ready: `NO`
+
+`FORBIDDEN-FAMILY-REFERENCES.txt` is retained as a **pre-remediation historical finding**, not as a statement of the current local code state.
+
 ## Public reports
 
-- `SUMMARY.txt` — final static-analysis status.
-- `STATIC-PROVENANCE-REPORT.txt` — exact kernel/BTF identity and safe-analysis status.
-- `CCZH1-PROVENANCE-AUDIT.tsv` — field-by-field provenance classification.
+- `SUMMARY.txt` — current static-analysis + remediation status.
+- `STATIC-PROVENANCE-REPORT.txt` — exact kernel/BTF identity and provenance status.
+- `POST-REMEDIATION-V3.txt` — post-remediation gate summary.
+- `CCZH1-PROVENANCE-AUDIT.tsv` — original field-by-field provenance classification.
 - `TARGET-H-AUDIT.tsv` — exact target header availability audit.
 - `UNRESOLVED-STATUS.tsv` — remaining profile gaps and classifications.
-- `FORBIDDEN-FAMILY-REFERENCES.txt` — foreign-family contamination audit.
-- `ARTIFACT-MANIFEST.txt` — hashes, sizes, and purposes of the recovered evidence.
+- `FORBIDDEN-FAMILY-REFERENCES.txt` — pre-remediation foreign-family contamination snapshot.
+- `ARTIFACT-MANIFEST.txt` — canonical package member hashes/sizes; see its scope note.
 
 ## Verified package
 
@@ -38,12 +61,16 @@ Canonical static-input package SHA-256:
 
 `909c15f1478a150549f5c44637804f06df6030d91882929d49692327328dffc5`
 
-The public binary release asset is intended to contain only exact static-analysis inputs and provenance material, not a root payload or exploit execution artifact.
+The release asset contains exact static-analysis inputs and provenance material, not a root payload or exploit execution artifact.
+
+Important: hashes/sizes in `ARTIFACT-MANIFEST.txt` describe the **canonical packaged artifacts**. Some text reports mirrored in this Git branch are public/sanitized or subsequently updated documentation and therefore are not expected to byte-match the package members.
 
 ## Current state
 
 - Static identity/provenance: `PASS`
 - Exact CCZH1 kernel/BTF/ELF/symbol inventory: verified
+- Pre-remediation foreign-family contamination: `FOUND` and rejected as evidence
+- Post-remediation active foreign-reference count: `0`
 - Foreign-family fallback accepted as evidence: `NO`
 - Exact verified `target.h`: `NO`
 - Root profile complete: `NO`
