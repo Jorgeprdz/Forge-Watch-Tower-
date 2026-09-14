@@ -1,3 +1,14 @@
+# SCOPE NOTE
+# The table below is the manifest of the canonical static-input package
+# CCZH1-Static-Inputs-20260914-145334.tar.gz.
+#
+# SIZE and SHA256 describe the package members at packaging time, not
+# necessarily the similarly named public/sanitized or subsequently updated
+# text files in this Git branch.
+#
+# Canonical package SHA-256:
+# 909c15f1478a150549f5c44637804f06df6030d91882929d49692327328dffc5
+
 ARTIFACT	SIZE	SHA256	PURPOSE
 boot.img	101122048	2461ffa5a96e9e411a7217832d3496e532ffe07755c4a059e8026b47c146685d	exact_CCZH1_boot_image
 boot.img.lz4	22667768	26c7da0516edebee9654eb9014f786d3064dc4402eabbd3fdea174049aaab696	exact_CCZH1_boot_member
