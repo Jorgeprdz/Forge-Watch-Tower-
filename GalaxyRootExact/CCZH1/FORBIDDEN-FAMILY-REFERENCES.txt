@@ -1,3 +1,18 @@
+# PRE-REMEDIATION HISTORICAL FINDING
+# Snapshot from the original static provenance audit.
+# These references were classified as FORBIDDEN_FAMILY_REFERENCE and were never
+# accepted as exact CCZH1 evidence.
+#
+# POST-REMEDIATION V3 STATUS:
+# FOREIGN_REFERENCE_COUNT_AFTER=0
+# LEGACY_FALLBACK_DISABLED=YES
+# LEGACY_PROXIMITY_HINT_DISABLED=YES
+# CROSS_TARGET_TEXT_SUBSTITUTION_DISABLED=YES
+# PROFILE_DERIVATION_STEP_DISABLED=YES
+# PAYLOAD_COMPILE_STEP_DISABLED=YES
+#
+# Historical findings follow:
+
 rootmygalaxy_profile_extract.py:22:PA2Q_REFERENCE,PA3Q_REFERENCE
 rootmygalaxy_profile_extract.py:279:REFERENCE_TARGET
 rootmygalaxy_profile_extract.py:373:PA2Q_REFERENCE,PA3Q_REFERENCE
