@@ -1,0 +1,25 @@
+REQUIREMENT	CATEGORY	EXACT_CCZH1_SUPPORT	CURRENT_EVIDENCE	VALUE_STATUS	ACCEPTANCE_REQUIREMENT	RELEASE_GATE
+model	TARGET_IDENTITY	YES	VERIFIED_EXACT	N/A	Must remain SM-S931B	PASS
+codename	TARGET_IDENTITY	YES	VERIFIED_EXACT	N/A	Must remain pa1q	PASS
+firmware	TARGET_IDENTITY	YES	VERIFIED_EXACT	N/A	Must remain S931BXXSCCZH1	PASS
+build_fingerprint	TARGET_IDENTITY	YES	VERIFIED_EXACT	N/A	Must match the exact verified CCZH1 build fingerprint	PASS
+kernel_identity	STATIC_INPUT_IDENTITY	YES	HASH_VERIFIED_EXACT	N/A	Must match the verified exact CCZH1 kernel identity	PASS
+btf_identity	STATIC_INPUT_IDENTITY	YES	HASH_VERIFIED_EXACT	N/A	Must match the embedded BTF from the same verified kernel	PASS
+vmlinux_elf_identity	STATIC_INPUT_IDENTITY	YES	HASH_VERIFIED_EXACT	N/A	Must match the recovered ELF from the exact CCZH1 kernel	PASS
+vmlinux_nm_identity	STATIC_INPUT_IDENTITY	YES	HASH_VERIFIED_EXACT	N/A	Must match the exact CCZH1 symbol inventory	PASS
+foreign_family_fallback	PROVENANCE	YES	POST_REMEDIATION_ACTIVE_REFERENCE_COUNT_0	N/A	No pa2q/pa3q/S938N family fallback may be accepted as evidence	PASS
+verified_CCZH1_target.h	TARGET_HEADER	PARTIAL	NO_VERIFIED_EXACT_HEADER	UNRESOLVED	A maintainer-verified exact pa1q-S931BXXSCCZH1 target header is required	BLOCKING
+P0_PAGE_OFFSET	PHYSICAL_LAYOUT	NO	NOT_ASSESSABLE_BY_NAME_ONLY	UNRESOLVED	Exact CCZH1-specific verified value required; family substitution prohibited	BLOCKING
+P0_PHYS_OFFSET	PHYSICAL_LAYOUT	NO	NOT_ASSESSABLE_BY_NAME_ONLY	UNRESOLVED	Exact CCZH1-specific verified value required; family substitution prohibited	BLOCKING
+P0_KERNEL_PHYS_LOAD	PHYSICAL_LAYOUT	NO	NOT_ASSESSABLE_BY_NAME_ONLY	UNRESOLVED	Exact CCZH1-specific verified value required; family substitution prohibited	BLOCKING
+SLIDE_TRACEFS_WORKER_CALLER_OFF	KERNEL_COMPONENT	PARTIAL	STRUCTURAL_NAME_EVIDENCE_PRESENT	UNRESOLVED	Exact CCZH1-specific verified value required; structural-name presence alone is insufficient	BLOCKING
+SLIDE_NFULNL_LOGGER_OBJECT_OFF	KERNEL_COMPONENT	PARTIAL	STRUCTURAL_NAME_EVIDENCE_PRESENT	UNRESOLVED	Exact CCZH1-specific verified value required; structural-name presence alone is insufficient	BLOCKING
+SLIDE_RANDOM_TABLE_BOOT_ID_DATA_PTR_OFF	KERNEL_COMPONENT	PARTIAL	STRUCTURAL_NAME_EVIDENCE_PRESENT	UNRESOLVED	Exact CCZH1-specific verified value required; structural-name presence alone is insufficient	BLOCKING
+SLIDE_SYSCTL_BOOTID_OFF	KERNEL_COMPONENT	PARTIAL	STRUCTURAL_NAME_EVIDENCE_PRESENT	UNRESOLVED	Exact CCZH1-specific verified value required; structural-name presence alone is insufficient	BLOCKING
+profile_status	ACTIVATION_GATE	YES	UNRESOLVED	UNRESOLVED	Must remain UNRESOLVED until every blocking exact-profile requirement is verified	BLOCKING
+profile_activation	ACTIVATION_GATE	YES	EXACT_DEVICE_PROFILE_REQUIRED	N/A	Must remain fail-closed until exact target requirements are satisfied	PASS
+profile_derivation_step	SAFETY_GATE	YES	DISABLED	N/A	Remain disabled while exact target header is unresolved	PASS
+payload_compile_step	SAFETY_GATE	YES	DISABLED	N/A	Remain disabled while any blocking target requirement is unresolved	PASS
+root_profile_complete	FINAL_GATE	YES	NO	UNRESOLVED	May become YES only after all blocking rows are exact-target verified	BLOCKING
+target_h_verified	FINAL_GATE	YES	NO	UNRESOLVED	May become YES only for an exact maintainer-verified CCZH1 header	BLOCKING
+exploit_ready	FINAL_GATE	YES	NO	UNRESOLVED	Not declared by this static/provenance evidence package	BLOCKING
